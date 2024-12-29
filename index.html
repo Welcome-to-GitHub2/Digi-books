@@ -62,6 +62,23 @@
     #cart .total {
       font-weight: bold;
     }
+    #checkout-form {
+      display: none;
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    #checkout-form input {
+      display: block;
+      margin-bottom: 10px;
+      padding: 10px;
+      width: 100%;
+    }
+    #checkout-form button {
+      margin-top: 10px;
+      background-color: #007bff;
+    }
   </style>
 </head>
 <body>
@@ -75,6 +92,18 @@
     <ul id="cart-items"></ul>
     <p class="total">Total: $<span id="cart-total">0.00</span></p>
     <button id="checkout-btn" style="display: none;">Checkout</button>
+  </div>
+
+  <!-- Checkout Form -->
+  <div id="checkout-form">
+    <h3>Checkout Form</h3>
+    <label for="name">Name:</label>
+    <input type="text" id="name" placeholder="Enter your name" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Enter your email" required>
+    <label for="address">Address:</label>
+    <input type="text" id="address" placeholder="Enter your address" required>
+    <button id="confirm-purchase-btn">Confirm Purchase</button>
   </div>
 
   <script>
@@ -132,12 +161,25 @@
     }
 
     function checkout() {
-      alert("Thank you for your purchase!");
-      cart = []; // Clear the cart
-      updateCart();
+      document.getElementById("checkout-form").style.display = "block";
     }
 
-    // Load books when the "More Books" button is clicked
+    function confirmPurchase() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const address = document.getElementById("address").value.trim();
+
+      if (!name || !email || !address) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      alert(`Thank you, ${name}, for your purchase! Confirmation sent to ${email}.`);
+      cart = []; // Clear the cart
+      updateCart();
+      document.getElementById("checkout-form").style.display = "none";
+    }
+
     document.getElementById("more-books-btn").addEventListener("click", () => {
       fetch(jsonURL)
         .then((response) => {
@@ -154,10 +196,9 @@
         });
     });
 
-    // Attach checkout function to the button
     document.getElementById("checkout-btn").addEventListener("click", checkout);
+    document.getElementById("confirm-purchase-btn").addEventListener("click", confirmPurchase);
 
-    // Initial load of books
     fetch(jsonURL)
       .then((response) => {
         if (!response.ok) {
