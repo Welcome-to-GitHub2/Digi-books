@@ -1,0 +1,32 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "The Art Of Being Alone",
+      "author": "Renuka Gavnani",
+      "price": 10.99,
+      "image": "61Ktyy7KymL._SL1500.jpg"
+    },
+    {
+      "id": 2,
+      "title": "War and Peace",
+      "author": "Leo Tolstoy",
+      "price": 15.50,
+      "image": "9781400079988.jpeg"
+    },
+    {
+      "id": 3,
+      "title": "The Lord of the Rings",
+      "author": "John Ronald",
+      "price": 15.50,
+      "image": "33.jpg"
+    },
+    {
+      "id": 4,
+      "title": "Change of Heart",
+      "author": "Jodi Picoult",
+      "price": 15.50,
+      "image": "400-heart-9780743496759.jpg"
+    }
+  ]
+}
