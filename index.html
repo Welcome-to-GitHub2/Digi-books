@@ -5,90 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Online Bookstore</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-    .book-item {
-      border: 1px solid #ddd;
-      padding: 10px;
-      margin: 10px;
-      text-align: center;
-      display: inline-block;
-      width: 200px;
-    }
-    .book-item img {
-      max-width: 100%;
-      height: auto;
-    }
-    button {
-      padding: 5px 10px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    #more-books-btn, #checkout-btn {
-      display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    #more-books-btn:hover, #checkout-btn:hover {
-      background-color: #218838;
-    }
-    #cart {
-      margin-top: 20px;
-    }
-    #cart h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    #cart ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    #cart ul li {
-      margin-bottom: 5px;
-    }
-    #cart .total {
-      font-weight: bold;
-    }
-    #checkout-form {
-      display: none;
-      margin-top: 20px;
-      border: 1px solid #ddd;
-      padding: 15px;
-      background-color: #f9f9f9;
-    }
-    #checkout-form input {
-      display: block;
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    #checkout-form button {
-      background-color: #007bff;
-      color: white;
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-      border: none;
-      cursor: pointer;
-    }
-    #checkout-form button:hover {
-      background-color: #0056b3;
-    }
+    /* Your existing styles here */
   </style>
 </head>
 <body>
@@ -116,7 +33,8 @@
   </div>
 
   <script>
-    const jsonURL = "https://raw.githubusercontent.com/Welcome-to-GitHub2/Digi-books/refs/heads/main/data.json";
+    const jsonURL = "http://localhost:3000/api/books"; // Pointing to the Node.js API
+    const cartAPI = "http://localhost:3000/api/cart"; // Cart API endpoint
     let cart = []; // Initialize an empty cart
 
     function renderBooks(books) {
@@ -179,10 +97,31 @@
       const address = document.getElementById("user-address").value;
 
       if (name && email && address) {
-        alert(`Thank you for your purchase, ${name}!\nDetails:\nEmail: ${email}\nAddress: ${address}`);
-        cart = []; // Clear the cart
-        updateCart();
-        document.getElementById("checkout-form").style.display = "none";
+        // Submit cart to the backend
+        fetch(cartAPI, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: email,
+            items: cart,
+            total: parseFloat(document.getElementById("cart-total").textContent),
+          }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert(`Thank you for your purchase, ${name}!\nDetails:\nEmail: ${email}\nAddress: ${address}`);
+              cart = []; // Clear the cart
+              updateCart();
+              document.getElementById("checkout-form").style.display = "none";
+            } else {
+              alert("Error processing purchase. Please try again.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error submitting cart:", error);
+          });
       } else {
         alert("Please fill in all required fields.");
       }
