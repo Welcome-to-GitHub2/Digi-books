@@ -123,108 +123,126 @@
     </section>
 
     <script>
-        let cart = [];
+let cart = [];
 
-        function addToCart(bookName, price) {
-            cart.push({ name: bookName, price: price });
-            updateCart();
-        }
+function addToCart(bookName, price) {
+    const existingItem = cart.find(item => item.name === bookName);
 
-        function updateCart() {
-            const cartItemsContainer = document.getElementById('cart-items');
-            cartItemsContainer.innerHTML = ""; 
+    if (existingItem) {
+        alert('This book is already in your cart.');
+        return;
+    }
 
-            let total = 0;
-            cart.forEach(item => {
-                const cartItem = document.createElement('div');
-                cartItem.classList.add('cart-item');
-                cartItem.innerHTML = `
-                    <p>${item.name} - $${item.price.toFixed(2)}</p>                    <button onclick="removeFromCart('${item.name}')">Remove</button>                `;
-                cartItemsContainer.appendChild(cartItem);
-                total += item.price;
-            });
+    cart.push({ name: bookName, price: price });
+    updateCart();
+}
 
-            if (cart.length === 0) {
-                cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-            }
+function updateCart() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    cartItemsContainer.innerHTML = "";
 
-            document.getElementById('checkout-button').style.display = cart.length > 0 ? 'block' : 'none';
-        }
+    let total = 0;
+    cart.forEach(item => {
+        const cartItem = document.createElement('div');
+        cartItem.classList.add('cart-item');
+        cartItem.innerHTML = `
+            <p>${item.name} - $${item.price.toFixed(2)}</p>
+            <button onclick="removeFromCart('${item.name}')">Remove</button>
+        `;
+        cartItemsContainer.appendChild(cartItem);
+        total += item.price;
+    });
 
-        function removeFromCart(bookName) {
-            cart = cart.filter(item => item.name !== bookName);
-            updateCart();
-        }
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+    }
 
-        function checkout() {
-            const checkoutSection = document.getElementById('checkout');
-            checkoutSection.style.display = 'block'; 
+    document.getElementById('checkout-button').style.display = cart.length > 0 ? 'block' : 'none';
+}
 
-            // Clear existing details if any
-            document.getElementById('customer-name').value = '';
-            document.getElementById('customer-email').value = '';
-            document.getElementById('customer-address').value = '';
+function removeFromCart(bookName) {
+    cart = cart.filter(item => item.name !== bookName);
+    updateCart();
+}
 
-            // Display order summary items
-            const orderSummaryItemsContainer = document.getElementById('order-summary-items');
-            orderSummaryItemsContainer.innerHTML = "";
+function checkout() {
+    const checkoutSection = document.getElementById('checkout');
+    checkoutSection.style.display = 'block';
 
-            let total = 0;
-            cart.forEach(item => {
-                const orderSummaryItem = document.createElement('p');
-                orderSummaryItem.textContent = `${item.name} - $${item.price.toFixed(2)}`;
-                orderSummaryItemsContainer.appendChild(orderSummaryItem);
-                total += item.price;
-            });
+    document.getElementById('customer-name').value = '';
+    document.getElementById('customer-email').value = '';
+    document.getElementById('customer-address').value = '';
 
-            // Display total price
-            document.getElementById('order-total').textContent = `$${total.toFixed(2)}`;
-        }
+    const orderSummaryItemsContainer = document.getElementById('order-summary-items');
+    orderSummaryItemsContainer.innerHTML = "";
 
-        function placeOrder() {
-            const customerName = document.getElementById('customer-name').value;
-            const customerEmail = document.getElementById('customer-email').value;
-            const customerAddress = document.getElementById('customer-address').value;
+    let total = 0;
+    cart.forEach(item => {
+        const orderSummaryItem = document.createElement('p');
+        orderSummaryItem.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+        orderSummaryItemsContainer.appendChild(orderSummaryItem);
+        total += item.price;
+    });
 
-            // Basic validation (you can add more robust checks)
-            if (!customerName || !customerEmail || !customerAddress) {
-                alert('Please fill in all the required fields.');
-                return;
-            }
- // Process order (e.g., send order confirmation email)
-            alert('Order placed successfully! Thank you, ' + customerName + '.');
+    document.getElementById('order-total').textContent = `$${total.toFixed(2)}`;
+}
 
-           
-            // Display order summary
-            const orderSummarySection = document.getElementById('order-summary');
-            const orderSummaryDetails = document.getElementById('order-summary-details');
-            orderSummaryDetails.innerHTML = ""; 
+function placeOrder() {
+    const customerName = document.getElementById('customer-name').value;
+    const customerEmail = document.getElementById('customer-email').value;
+    const customerAddress = document.getElementById('customer-address').value;
 
-            let total = 0;
-            cart.forEach(item => {
-                orderSummaryDetails.innerHTML += `
-                    <p>${item.name} - $${item.price.toFixed(2)}</p>                `;
-                total += item.price;
-            });
+    if (!customerName || !customerEmail || !customerAddress) {
+        alert('Please fill in all the required fields.');
+        return;
+    }
 
-            orderSummaryDetails.innerHTML += `
-                <p>Total: $${total.toFixed(2)}</p>
-                <p>Name: ${customerName}</p>
-                <p>Email: ${customerEmail}</p>
-                <p>Address: ${customerAddress}</p>
-            `;
+    if (!/\S+@\S+\.\S+/.test(customerEmail)) {
+        alert('Please enter a valid email address.');
+        return;
+    }
 
-            checkoutSection.style.display = 'none';
-            orderSummarySection.style.display = 'block'; 
-        }
+    alert('Order placed successfully! Thank you, ' + customerName + '.');
 
-        updateCart(); 
+    const orderSummarySection = document.getElementById('order-summary');
+    const orderSummaryDetails = document.getElementById('order-summary-details');
+    orderSummaryDetails.innerHTML = "";
 
-	//fetch books api thing
+    let total = 0;
+    cart.forEach(item => {
+        orderSummaryDetails.innerHTML += `
+            <p>${item.name} - $${item.price.toFixed(2)}</p>
+        `;
+        total += item.price;
+    });
+
+    orderSummaryDetails.innerHTML += `
+        <p>Total: $${total.toFixed(2)}</p>
+        <p>Name: ${customerName}</p>
+        <p>Email: ${customerEmail}</p>
+        <p>Address: ${customerAddress}</p>
+    `;
+
+    document.getElementById('checkout').style.display = 'none';
+    orderSummarySection.style.display = 'block';
+}
+
 fetch('https://raw.githubusercontent.com/Welcome-to-GitHub2/Digi-books/refs/heads/main/data.json')
     .then(response => response.json())
     .then(data => {
-        console.log(data); // Process the JSON data
+        const booksSection = document.getElementById('books');
+
+        data.forEach(book => {
+            const bookItem = document.createElement('div');
+            bookItem.classList.add('book-item');
+            bookItem.innerHTML = `
+                <img src="${book.image}" alt="${book.title}">
+                <h3>${book.title}</h3>
+                <p>${book.author}</p>
+                <button onclick="addToCart('${book.title}', ${book.price})">Add to Cart</button>
+            `;
+            booksSection.appendChild(bookItem);
+        });
     })
     .catch(error => console.error('Error fetching JSON:', error));
 
