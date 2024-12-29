@@ -62,6 +62,33 @@
     #cart .total {
       font-weight: bold;
     }
+    #checkout-form {
+      display: none;
+      margin-top: 20px;
+      border: 1px solid #ddd;
+      padding: 15px;
+      background-color: #f9f9f9;
+    }
+    #checkout-form input {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #checkout-form button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+    #checkout-form button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body>
@@ -75,6 +102,17 @@
     <ul id="cart-items"></ul>
     <p class="total">Total: $<span id="cart-total">0.00</span></p>
     <button id="checkout-btn" style="display: none;">Checkout</button>
+  </div>
+
+  <!-- Checkout Form -->
+  <div id="checkout-form">
+    <h2>Checkout</h2>
+    <form id="user-details-form">
+      <input type="text" id="user-name" placeholder="Your Name" required />
+      <input type="email" id="user-email" placeholder="Your Email" required />
+      <input type="text" id="user-address" placeholder="Your Address" required />
+      <button type="submit">Complete Purchase</button>
+    </form>
   </div>
 
   <script>
@@ -99,7 +137,6 @@
     }
 
     function addToCart(id, title, price) {
-      const cartItems = document.getElementById("cart-items");
       const existingItem = cart.find((item) => item.id === id);
 
       if (existingItem) {
@@ -131,11 +168,28 @@
       checkoutBtn.style.display = cart.length > 0 ? "block" : "none"; // Show/hide checkout button
     }
 
-    function checkout() {
-      alert("Thank you for your purchase!");
-      cart = []; // Clear the cart
-      updateCart();
+    function showCheckoutForm() {
+      document.getElementById("checkout-form").style.display = "block";
     }
+
+    function completePurchase(event) {
+      event.preventDefault(); // Prevent form submission
+      const name = document.getElementById("user-name").value;
+      const email = document.getElementById("user-email").value;
+      const address = document.getElementById("user-address").value;
+
+      if (name && email && address) {
+        alert(`Thank you for your purchase, ${name}!\nDetails:\nEmail: ${email}\nAddress: ${address}`);
+        cart = []; // Clear the cart
+        updateCart();
+        document.getElementById("checkout-form").style.display = "none";
+      } else {
+        alert("Please fill in all required fields.");
+      }
+    }
+
+    document.getElementById("checkout-btn").addEventListener("click", showCheckoutForm);
+    document.getElementById("user-details-form").addEventListener("submit", completePurchase);
 
     // Load books when the "More Books" button is clicked
     document.getElementById("more-books-btn").addEventListener("click", () => {
@@ -153,9 +207,6 @@
           console.error("Error loading books:", error);
         });
     });
-
-    // Attach checkout function to the button
-    document.getElementById("checkout-btn").addEventListener("click", checkout);
 
     // Initial load of books
     fetch(jsonURL)
